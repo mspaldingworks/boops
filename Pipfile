@@ -9,6 +9,7 @@ name = "pypi"
 
 background = {git = "https://github.com/kennethreitz/background.git"}
 simpleaudio = "*"
+scipy = "*"
 
 
 [dev-packages]

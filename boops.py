@@ -1,11 +1,33 @@
 import gc, os, sys, time
+import importlib
+
 from itertools import cycle
 
 import background
+
+import numpy as np
+
+from scipy.io import wavfile
 import simpleaudio as sa
 
+import filters
+
+filters_m_time = os.path.getmtime('filters.py')
 background.n = 16
 gc.disable()
+
+
+@background.task
+def async_reload_filters():
+    global filters_m_time
+    try:
+        if not filters_m_time or filters_m_time < os.path.getmtime('filters.py'):
+            importlib.reload(filters)
+            filters_m_time = os.path.getmtime('filters.py')
+            print('Reloaded filters')
+    except Exception as e:
+        print(e)
+
 
 @background.task
 def async_print(s):
@@ -16,9 +38,13 @@ def async_print(s):
 def play_beat_at(dm, beat, at, t):
     while True:
         if time.time() - t > at:
-            drift = time.time() - t - at
-            beat.play()
-            dm.set_drift(drift)        
+            try:
+                snd = filters.run(beat)
+                drift = time.time() - t - at
+                sa.play_buffer(snd, 1, 2, 44100)
+                dm.set_drift(drift)
+            except Exception as e:
+                print(e)
             return
 
 
@@ -49,9 +75,6 @@ class DrumMachine:
     def set_drift(self, d):
         self.drift = [round(d, 3)] + self.drift[:31]
 
-        if self.verbose and self.beat % 16 == 0:
-            async_print(f'AVG Drift: {round(sum(self.drift) / len(self.drift), 4)}')
-
         if not self.max_drift or d > self.max_drift:
             self.max_drift = d
             if self.verbose:
@@ -74,12 +97,14 @@ class DrumMachine:
 
             if s and not s.startswith('#'):
                 fn, bar = s.lower().split(" ", 1)
-                samples.append(sa.WaveObject.from_wave_file(fn))
-                bars.append(bar)
+
+                if 'x' in bar.lower():
+                    fs, data = wavfile.read(fn)
+                    samples.append(data)
+                    bars.append(bar)
 
         bars = [
             b.split() for b in bars
-            if 'x' in b.lower()
         ]
 
         max_len = max([len(x) for x in bars])
@@ -115,6 +140,9 @@ class DrumMachine:
                     async_load(self)
 
                     if self.beat % 16 == 0:
+                        async_reload_filters()
+                        async_print(f'AVG Drift: {round(sum(self.drift) / len(self.drift), 4)}')
+
                         if self.has_new_bar:
                             async_print('Reloading bar...')
                             bar, samples = self.bar, self.samples
