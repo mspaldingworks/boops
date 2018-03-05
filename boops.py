@@ -12,9 +12,10 @@ import simpleaudio as sa
 
 import filters
 
-filters_m_time = os.path.getmtime('filters.py')
 background.n = 16
 gc.disable()
+
+filters_m_time = os.path.getmtime('filters.py')
 
 
 @background.task
@@ -24,7 +25,7 @@ def async_reload_filters():
         if not filters_m_time or filters_m_time < os.path.getmtime('filters.py'):
             importlib.reload(filters)
             filters_m_time = os.path.getmtime('filters.py')
-            print('Reloaded filters')
+            print('> Reloaded filter')
     except Exception as e:
         print(e)
 
@@ -84,7 +85,6 @@ class DrumMachine:
             self.max_drift = d
             if self.verbose:
                 async_print(f'MAX Drift: {self.beat}: {round(self.max_drift, 4)}')
-
 
     def load_boops(self):
         if self.beats_m_time == os.path.getmtime(self.fn):
@@ -159,7 +159,6 @@ class DrumMachine:
                             self.has_new_bar = False
                     
                     time.sleep(self.gap / 2)
-
         except KeyboardInterrupt:
             return
 
