@@ -1,17 +1,21 @@
-samples/hammerhead/hh_909_bd.wav            X . . . X . . . X . . . X . . .
-# samples/hammerhead/hh_808_snare.wav         X . . X . . . . X . X . . . . .
-# samples/hammerhead/ultimate_dnb_2.wav       X . . . . . . . X . . . . . . .
+-- tempo: 80
 
+samples/hammerhead/hh_909_bd.wav            X . . . X . . . X . . . X . . .
+samples/hammerhead/hh_808_snare.wav         X . . X . . . . X . X . . . . .
+samples/hammerhead/house_1_1.wav            . . . . . x . x . . . . . . . .
 
 samples/hammerhead/system100_1.wav          x . . . x . . . x . . . x . . . 
-# samples/hammerhead/system100_2.wav          . . X . . . . . . . x . . . . .
-# samples/hammerhead/system100_3.wav          . . . . . x . x . x . x . x . x
+
+samples/hammerhead/ultimate_dnb_2.wav       X . . . . . . . X . . . . . . .
+
+
+samples/hammerhead/system100_2.wav          . . X . . . . . . . x . . . . .
+samples/hammerhead/system100_3.wav          . . . . . x . . . . . . . x . x
 
 
 
 
 # samples/hammerhead/ultimate_dnb_2.wav               x . X . . . . . x . x . . . . .
-# samples/hammerhead/house_1_1.wav                    . . . . . x . x . . . . . . . .
 # samples/hammerhead/compurhythm_8000_3.wav           . . . . x . . . . . . . x . . .
 # samples/hammerhead/compurhythm_78_4.wav             x . x . . x . x x . x . x . x .
 # samples/hammerhead/human_beatbox_4.wav              . . . . . . . . . . . . x x x x

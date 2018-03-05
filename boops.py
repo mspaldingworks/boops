@@ -58,19 +58,24 @@ class DrumMachine:
     beats_m_time = None
 
     def __init__(self, fn, tempo):
-        self.gap = 30 / tempo
-        print(self.gap)
         self.fn = fn
 
+        self.beat = 0
+        self.drift = []
         self.bar = []
         self.samples = []
+
+        self.has_new_bar = False
+
+        self.max_drift = None
         self.beats_m_time = None
 
+        self.set_tempo(tempo)
         self.load_boops()
-        self.beat = 0
-        self.has_new_bar = False
-        self.max_drift = None
-        self.drift = []
+
+    def set_tempo(self, tempo):
+        self.tempo = tempo
+        self.gap = 30 / tempo
 
     def set_drift(self, d):
         self.drift = [round(d, 3)] + self.drift[:31]
@@ -96,12 +101,17 @@ class DrumMachine:
             s = s.strip()
 
             if s and not s.startswith('#'):
-                fn, bar = s.lower().split(" ", 1)
+                if s.startswith('--'):
+                    if 'tempo:' in s:
+                        _, tempo = s.split('tempo:', 1)
+                        self.set_tempo(int(tempo.strip()))
+                else:
+                    fn, bar = s.lower().split(" ", 1)
 
-                if 'x' in bar.lower():
-                    fs, data = wavfile.read(fn)
-                    samples.append(data)
-                    bars.append(bar)
+                    if 'x' in bar.lower():
+                        fs, data = wavfile.read(fn)
+                        samples.append(data)
+                        bars.append(bar)
 
         bars = [
             b.split() for b in bars
